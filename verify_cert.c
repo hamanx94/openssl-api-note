@@ -49,8 +49,8 @@ int verify_certificate(char *cert_name, char *root_name)
         ret = 0x00;
     } while(0);
 
-    if(fpRoot != NULL) fclose(fpRoot);
-    if(fpCert != NULL) fclose(fpCert);
+    if(fpRoot) fclose(fpRoot);
+    if(fpCert) fclose(fpCert);
 
     X509_STORE_CTX_cleanup(store_ctx);
     X509_STORE_CTX_free(store_ctx);
