@@ -10,13 +10,29 @@
 
 #define d_CRT_VERSION                       NID_pkcs
 
+struct X509_NAME_PARA
+{
+    char field[16];
+    int type;
+    char bytes[128];
+};
+
 int generate_csr(EVP_PKEY *pkey, char *common, char *csr, int *csr_len)
 {
-    int rc = -1;
+    int rc = -1, count, i;
     X509_REQ *req = NULL;
     X509_NAME *name = NULL;
     BIO *bio = NULL;
     char *p = NULL;
+    X509_NAME_PARA para[] =
+    {
+        {"C", MBSTRING_ASC, d_CSR_COUNTRY},
+        {"ST",  MBSTRING_ASC, d_CSR_STATE},
+        {"L",  MBSTRING_ASC, d_CSR_LOCALITY},
+        {"O", MBSTRING_ASC, d_CSR_ORGANISATION},
+        {"OU", MBSTRING_ASC, d_CSR_ORGANISATIONAL_UNIT},
+        {"emailAddress", MBSTRING_ASC, d_CSR_EMAIL_ADDRESS}
+    };
 
     do
     {
@@ -33,37 +49,17 @@ int generate_csr(EVP_PKEY *pkey, char *common, char *csr, int *csr_len)
 
         name = X509_REQ_get_subject_name(req);
 
-        if(X509_NAME_add_entry_by_txt(name, "C",  MBSTRING_ASC, (unsigned char *)d_CSR_COUNTRY, -1, -1, 0) != 1)
+        count  = sizeof(para) / sizeof(X509_NAME_PARA);
+        for(i = 0 ; i < count ; i++)
         {
-            break;
+            if(X509_NAME_add_entry_by_txt(name, para[i].field, para[i].type, (unsigned char *)para[i].bytes, -1, -1, 0) != 1)
+                break;
         }
 
-        if(X509_NAME_add_entry_by_txt(name, "ST",  MBSTRING_ASC, (unsigned char *)d_CSR_STATE, -1, -1, 0) != 1)
-        {
+        if(i != count)
             break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "L",  MBSTRING_ASC, (unsigned char *)d_CSR_LOCALITY, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "O",  MBSTRING_ASC, (unsigned char *)d_CSR_ORGANISATION, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "OU",  MBSTRING_ASC, (unsigned char *)d_CSR_ORGANISATIONAL_UNIT, -1, -1, 0) != 1)
-        {
-            break;
-        }
 
         if(X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, (unsigned char *)common, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "emailAddress", MBSTRING_ASC, (unsigned char *)d_CSR_EMAIL_ADDRESS, -1, -1, 0) != 1)
         {
             break;
         }
@@ -188,9 +184,19 @@ int gen_selfsigned_crt(char *common, int days, EVP_PKEY *pkey, char *selfsigned,
 {
     X509 *x509 = NULL;
     X509_NAME *name = NULL;
-    int rc = -1;
+    int rc = -1, count, i;
     BIO *bio = NULL;
     char *p = NULL;
+    X509_NAME_PARA para[] =
+    {
+        {"C", MBSTRING_ASC, d_CSR_COUNTRY},
+        {"ST",  MBSTRING_ASC, d_CSR_STATE},
+        {"L",  MBSTRING_ASC, d_CSR_LOCALITY},
+        {"O", MBSTRING_ASC, d_CSR_ORGANISATION},
+        {"OU", MBSTRING_ASC, d_CSR_ORGANISATIONAL_UNIT},
+        {"emailAddress", MBSTRING_ASC, d_CSR_EMAIL_ADDRESS}
+    };
+
     do
     {
         x509 = X509_new();
@@ -202,37 +208,17 @@ int gen_selfsigned_crt(char *common, int days, EVP_PKEY *pkey, char *selfsigned,
 
         name = X509_NAME_new();
 
-        if(X509_NAME_add_entry_by_txt(name, "C",  MBSTRING_ASC, (unsigned char *)d_CSR_COUNTRY, -1, -1, 0) != 1)
+        count  = sizeof(para) / sizeof(X509_NAME_PARA);
+        for(i = 0 ; i < count ; i++)
         {
-            break;
+            if(X509_NAME_add_entry_by_txt(name, para[i].field, para[i].type, (unsigned char *)para[i].bytes, -1, -1, 0) != 1)
+                break;
         }
 
-        if(X509_NAME_add_entry_by_txt(name, "ST",  MBSTRING_ASC, (unsigned char *)d_CSR_STATE, -1, -1, 0) != 1)
-        {
+        if(i != count)
             break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "L",  MBSTRING_ASC, (unsigned char *)d_CSR_LOCALITY, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "O",  MBSTRING_ASC, (unsigned char *)d_CSR_ORGANISATION, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "OU",  MBSTRING_ASC, (unsigned char *)d_CSR_ORGANISATIONAL_UNIT, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
+        
         if(X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, (unsigned char *)common, -1, -1, 0) != 1)
-        {
-            break;
-        }
-
-        if(X509_NAME_add_entry_by_txt(name, "emailAddress", MBSTRING_ASC, (unsigned char *)d_CSR_EMAIL_ADDRESS, -1, -1, 0) != 1)
         {
             break;
         }
