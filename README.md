@@ -13,4 +13,4 @@
 + read_rsakey_from_file  
 
 # verify_cert.c  
-+ verify_certificate: using ___X509_verify_cert___ and ___X509_verify___  
++ verify_certificate: using `X509_verify_cert` and `X509_verify`
