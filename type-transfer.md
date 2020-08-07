@@ -29,7 +29,7 @@ i2d_RSAPrivateKey, RSA *r
 
     buf = NULL;
     rc = i2d_RSAPrivateKey(r, &buf);
-    if(rc <=)
+    if(rc <= 0)
         return;
 ```
 i2d_RSAPublicKey, RSA *r
@@ -39,7 +39,7 @@ i2d_RSAPublicKey, RSA *r
 
     buf = NULL;
     rc = i2d_RSAPublicKey(r, &buf);
-    if(rc <=)
+    if(rc <= 0)
         return;
 ```
 
